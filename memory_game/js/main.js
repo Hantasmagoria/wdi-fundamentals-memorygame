@@ -1,33 +1,75 @@
-var cards = ["queen","queen","king","king","back"];
+const cards = [
+{
+	rank:"queen",
+	suit:"hearts",
+	cardImage:"images/queen-of-hearts.png",
+},
+{
+	rank:"queen",
+	suit:"diamonds",
+	cardImage:"images/queen-of-diamonds.png",
+},
+{
+	rank:"king",
+	suit:"hearts",
+	cardImage:"images/king-of-hearts.png",
+},
+{
+	rank:"king",
+	suit:"diamonds",
+	cardImage:"images/king-of-diamonds.png",
+}];
 var cardsInPlay = [];
-
-
+var gameState = 0;
 var card1=0, card2=0;
 
-function flip(cardID){
+function showInstructions(){
+	if (gameState){
+		resetAll();
+	}
+	document.getElementById('game-board').innerHTML = "<div class='instructions'><p>Hit 'Game' to play or reset the game. </p></div>";
+	gameState = 1;
+}
+
+function createBoard(){
+	if (gameState){
+		resetAll();
+	}
+	for (i = 0; i < cards.length; i++) {
+    	var cardElement = document.createElement('img');
+    	cardElement.setAttribute('src', "images/back.png");
+    	cardElement.setAttribute('data-id', i);
+    	cardElement.addEventListener('click', flip);
+    	document.getElementById('game-board').appendChild(cardElement);
+	}
+	gameState = 1;
+}
+
+function flip(){
+	var cardID = this.getAttribute('data-id');
 	if (card1 == 0) {
-		card1 = cards[cardID];
+		this.setAttribute('src',cards[cardID].cardImage);
+		card1 = cards[cardID].rank;
 		cardsInPlay.push(card1);
 	}else if (card2 == 0) {
-		card2 = cards[cardID];
+		this.setAttribute('src',cards[cardID].cardImage);
+		card2 = cards[cardID].rank;
 		cardsInPlay.push(card2);
 		check();
 	}
 }
 
 function check(){
-	if (cardsInPlay.length > 2){
-		console.log("overflow: array 'cardsInPlay'");
-		resetCards(cardsInPlay);
-	}
 	if(cardsInPlay.length == 2){
 		if (cardsInPlay[0] === cardsInPlay[1]) {
-			console.log("Win.");
+			alert("You found a match!");
 			resetCards(cardsInPlay);
 			card1 = resetCards(card1);
 			card2 = resetCards(card2);
 		}else if (cardsInPlay[0] != cardsInPlay[1]) {
-			console.log("Lose.");
+			alert("The cards did not match. Sorry, try again");
+			unflip(card1);
+			unflip(card2);
 			resetCards(cardsInPlay);
 			card1 = resetCards(card1);
 			card2 = resetCards(card2);
@@ -35,11 +77,21 @@ function check(){
 	}
 }
 
+function unflip(a){
+	for(i=0;i<document.getElementById('game-board').childNodes.length;i++){
+		if (document.getElementById('game-board').childNodes[i].getAttribute('src') != "images/back.png"){
+			for(j=0;j<cards.length;j++){
+				if(document.getElementById('game-board').childNodes[i].getAttribute('src') == cards[j].cardImage && a == cards[j].rank){
+					document.getElementById('game-board').childNodes[i].setAttribute('src', "images/back.png");
+				}
+			}
+		}
+	}
+}
 
 function resetCards(set){
 	if (typeof set == "object"){
 		for (var i = 0; i < set.length; i++) {
-			console.log(set);
 			set.pop();
 			set.pop();
 			return;
@@ -47,4 +99,9 @@ function resetCards(set){
 	}else if (typeof set == "string"){
 		return 0;
 	}
+}
+
+function resetAll(){
+	document.getElementById('game-board').innerHTML = "";
+	gameState = 0;
 }

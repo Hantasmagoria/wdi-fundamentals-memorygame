@@ -95,6 +95,11 @@ color: #F15B31;
 font-weight: 700;
 }
 
+.instructions {
+  background: rgba(0,0,0,.7);
+  color: #2ecc71;
+}
+
 a:hover{
   transition: 1s cubic-bezier(0,0.5,0,1);
   font-size: 45px;
